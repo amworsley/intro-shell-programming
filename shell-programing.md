@@ -1,17 +1,52 @@
-# Introduction to programming
+# Shell Programming
+## An Introduction
 
 ---
 
-# Really important to know because
-## Power user
-## Save on mistakes/errors
-## Automate - vastly faster
-## Step up to the next level of power
+# Really important because:
+* Capture that hardwon knowledge
+* Save on mistakes/errors
+* Automate - work vastly faster
+* Step up to the next level of power
 
 ---
 
-# When ever you have several commands
-Don't waste that knowledge and experience
+# A Complex Command
+## Don't waste that knowledge and experience
+
+> find . -mtime -7 -type f -print
+
+Make a shell function
+> newfiles() { find . -mtime -7 -type f -print }
+
+---
+# Now you can build on it
+
+Add an argument to make it flexible
+> newfiles() { find . -mtime "-${1:-7}" -type f -print }
+
+Now files less than 10 days old
+> newfiles 10
+
+---
+# Save it forever
+
+## Append it to your .bashrc or start up scripts
+> cat >> ~/.bashrc  
+> newfiles() { find . -mtime "-${1:-7}" -type f -print }  
+> ^D  
+> . ~/.bashrc  
+
+## Check if it is defined
+> which newfiles  
+> newfiles () {  
+>    find . -mtime "-${1:-7}" -type f -print  
+> }  
+
+---
+
+# Multiple Commands
+# Don't waste that knowledge and experience
 
 ---
 
