@@ -1,5 +1,6 @@
 # Shell Programming
 ## An Introduction
+## by Andrew Worsley
 
 ---
 
@@ -12,48 +13,60 @@
 ---
 
 # A Complex Command
-## Don't waste that knowledge and experience
+### Don't waste that knowledge and experience
 
-> find . -mtime -7 -type f -print
+    !sh
+    % find . -mtime -7 -type f -print
 
-Make a shell function
-> newfiles() { find . -mtime -7 -type f -print }
+### Make a shell function
+
+    !sh
+    % newfiles() { find . -mtime -7 -type f -print }
 
 ---
 # Now you can build on it
 
-Add an argument to make it flexible
-> newfiles() { find . -mtime "-${1:-7}" -type f -print }
+### Add an argument to make it flexible
 
-Now files less than 10 days old
-> newfiles 10
+    !sh
+    % newfiles() { find . -mtime "-${1:-7}" -type f -print }
+
+### Now files less than 10 days old
+
+    !sh
+    % newfiles 10
 
 ---
 # Save it forever
 
-## Append it to your .bashrc or start up scripts
-> cat >> ~/.bashrc  
-> newfiles() { find . -mtime "-${1:-7}" -type f -print }  
-> ^D  
-> . ~/.bashrc  
+### Append it to your .bashrc or start up scripts
 
-## Check if it is defined
-> which newfiles  
-> newfiles () {  
->    find . -mtime "-${1:-7}" -type f -print  
-> }  
+    !sh
+    % cat >> ~/.bashrc  
+    newfiles() { find . -mtime "-${1:-7}" -type f -print }  
+    ^D  
+    % . ~/.bashrc  
+
+### Check if it is defined
+
+    !sh
+    % which newfiles  
+    newfiles () {  
+        find . -mtime "-${1:-7}" -type f -print  
+    }
 
 ---
 
 # Multiple Commands
 
+    !sh
     echo "Full backup of home"
     sudo dump -0au -z -f - /home \ 
      | ssh -p123 backup-pc dd of=/backups/machine/D_L0.dump bs=1M
 
-## Don't waste that knowledge and experience
-## Put this into script file!
-## To do this efficiently there are some tricks...
+* Don't waste that knowledge and experience
+* Put this into script file!
+* To do this efficiently there are some tricks...
 
 ---
 
@@ -92,15 +105,22 @@ a common fragment
     echo "Do stuff here"
 
 ---
-
+# Copy template as the base
+### cp ex.sh newscript.sh
 * Saves typing/debugging/remembering stuff
-* Really makes it easy to re-use/step up
-* Really helps document that work you put
-After you've worked out how to use a tool
-and all the funny options and common use
-cases you can add usage and hide all complexity
+* Really makes it easy to re-use/extend work
+* Prompts you to document it for later retrieval
+* Builtin debugging / diagnostics
 
-
+Preserves all that information and knowledge
+you've worked out to get the tools running.
+This preserves it for easy use later. It serves
+as a extensible platform to easily add new features
+or options later on.
+As it hides all the funny options and complexity
+in an easy to use command you will use it more often
+and easily on the command line and as part of other
+scripts.
 
 ---
 
