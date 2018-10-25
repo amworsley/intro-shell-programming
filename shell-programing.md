@@ -46,53 +46,72 @@ Now files less than 10 days old
 ---
 
 # Multiple Commands
-# Don't waste that knowledge and experience
+
+    echo "Full backup of home"
+    sudo dump -0au -z -f - /home \ 
+     | ssh -p123 backup-pc dd of=/backups/machine/D_L0.dump bs=1M
+
+## Don't waste that knowledge and experience
+## Put this into script file!
+## To do this efficiently there are some tricks...
 
 ---
 
-# To do this efficiently there are some tricks
+# Kick start with a template
+Preload valuable help and debug features with
+a common fragment
+
+    !sh
+    #! /bin/sh
+
+    usage()
+    {
+       echo "$(basename $0): Description of script"
+       echo ""
+       echo "-h : This usage information"
+       echo "-n : Dry-run print commands instead of executing them"
+       echo "-x : Enabling tracing of shell script"
+    }
+
+    while getopts 'nxhA:' argv
+    do
+	case $argv in
+	n)
+	   echo "Dry-Run"
+	   DR=echo
+	;;
+	x)
+	    echo "Enabling tracing"
+	    set -x
+	;;
+	#A) ARG="$OPTARG" ;;
+	h) usage ;;
+	esac
+    done
+    shift $(($OPTIND-1))
+    echo "Do stuff here"
 
 ---
 
-# Basic Framework
-## Saves typing/debugging/remembering stuff
-## Really makes it easy to re-use/step up
-## Really helps document that work you put
+* Saves typing/debugging/remembering stuff
+* Really makes it easy to re-use/step up
+* Really helps document that work you put
 After you've worked out how to use a tool
 and all the funny options and common use
 cases you can add usage and hide all complexity
 
----
 
-# Common options - really help you extend/debug
-# -h = usage
-# -n = dry run - print commands don't run them!
-# -x = shell debugging set -x mode
 
 ---
 
-# Common argument parsing 
+# Common options
+## Really help you extend/debug
+* -h = usage
+* -n = dry run - print commands don't run them!
+* -x = shell debugging set -x mode
+## Common argument parsing 
  Adds above options by default and lets you
 easily extend / improve your code snippet.
-
----
-
-# Shell functions
-# arguments
-# calling
-# returning
-
----
-
-# Common shell functions
-Improve the debugging with die() method
-Dump out calling line/error message
-
----
-
-# Read a good book on Shell programming
-It will repay the time you spend *VASTLY* in terms
-of saving effort and understanding.
 
 ---
 
@@ -154,3 +173,26 @@ of saving effort and understanding.
 ## pidof - Process no.
 ## trap for signals
 ## ps - -C -f -U ....
+---
+
+# Shell functions
+# arguments
+# calling
+# returning
+
+---
+
+# Common shell functions
+Improve the debugging with die() method
+Dump out calling line/error message
+
+---
+
+# Read a Good Book
+### on Shell programming
+ * It will repay the time you spend *VASTLY* in terms
+of saving effort and understanding.
+
+![Shell Scripting by Steve Parker](shellscripting-cover.jpg)
+
+### Shell Scripting by Steve Parker
