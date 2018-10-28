@@ -136,23 +136,80 @@ easily extend / improve your code snippet.
 ---
 
 # Shell Variables
-# Shell Expansion
-# wild cards
-## joining/default value
-## prefix/postfix changing
-## pattern substitution
+## Shell Expansion
+## Joining/default value
+## Prefix/postfix changing
+## Pattern substitution
+## Wild cards
+    !sh
+    #! /bin/sh
+    set -x
+    COUNT=2
+    echo $COUNT
+    V=${1:-"hello"}
+    B=${2:-"world"}
+    C=${B%ef}
+    #C=${B/a*/def}
+    echo A=$A B=$B REST=$*
+    shift 2
+    echo Now REST=$*
 
 ---
 
-# Flow control
-## while do done
-## if Else fi
-## elif
-## case - far better
-## break / continue
+# Flow control 1
+### while ... do ... done
+
+    !sh
+    while [ $C -lt 10 ]; do
+        C=$(($C + 1))
+        echo "Try $C"
+        sleep $S 
+    done
 
 ---
 
+# Flow control 2
+### if ... then ... elfi ... else ... fi
+### break / continue
+
+    !sh
+    while [ $C -lt 10 ]; do
+        C=$(($C + 1))
+        echo "Try $C"
+        if $DR $* ; then
+            echo "Ok"
+        else
+            echo "Failed $?"
+            break
+        fi
+        sleep $S 
+    done
+
+---
+# Flow control 3
+### case ... in ... esac - far better than if
+
+    !sh
+    while [ $C -lt 10 ]; do
+        C=$(($C + 1))
+        echo "Try $C"
+        if $DR $* ; then
+            echo "Ok"
+        else
+            echo "Failed $?"
+            break
+        fi
+        sleep $S 
+    done
+    case $C in
+    $N) echo "Ran '$*' $N times with no failures";;
+    *)
+      echo "$* : Failed on try $C"
+      exit 1
+    ;;
+    esac
+
+---
 # File redirection
 ## Combine with < or > or >> or |
 ## Control Error messages with 2>&1 (or >&)
