@@ -156,6 +156,25 @@ easily extend / improve your code snippet.
 
 ---
 
+# Key builtins
+## read  to prompt for data into variable
+## test or [ or [[
+### -e -x -f -r -w
+## arithmetic $(($x+1))
+## $() or \` \`
+
+    !sh
+    #! /bin/sh
+    echo "Hi $(whoami), enter minimum size in K to find and directory"
+    read SZK dir
+    if [ ! -d $dir ]; then
+        echo "Sorry $dir is a directory: $dir"
+        exit 1
+    fi
+    echo "Looking for files $(($SZK*1024)) bytes or bigger in $dir"
+    find $dir -type f -size +${SZK}k -exec du -h \{} \;
+---
+
 # Flow control 1
 ### while ... do ... done
 
@@ -208,18 +227,30 @@ easily extend / improve your code snippet.
       exit 1
     ;;
     esac
+---
+
+# Various shells
+## Warning: dash vs bash
+### dash - 31 page manual, most things, faster
+    !sh
+    #! /bin/sh
+    I=1
+    x[$I]=hello  ==> Error 
+
+### bash - 123 page manual, extra things, arrays
+    #! /bin/bash
+    I=1
+    x[$I]=hello
+    echo ${x[$I]} ==> hello
+
+### zsh csh and others....
+### Script any program sed, awk, ...
 
 ---
 # File redirection
 ## Combine with < or > or >> or |
 ## Control Error messages with 2>&1 (or >&)
 ## explicit file descriptor 4< and ls -l /proc/$$/fd
-
----
-
-# Various shells
-## Warning: dash vs bash
-## zsh csh and others....
 
 # Shell arrays
 ## basic notation/usage
@@ -229,16 +260,6 @@ easily extend / improve your code snippet.
 
 # Including files
 # use . to share common code
-
----
-
-# Key builtins
-## read  to prompt for data into variable
-## test or [ (or [[
-## -e -x
-## local to scope variables
-## arithmetic $(($x+1))
-## $() or ` `
 
 ---
 
@@ -256,6 +277,7 @@ easily extend / improve your code snippet.
 # arguments
 # calling
 # returning
+## local to scope variables
 
 ---
 
