@@ -174,7 +174,17 @@ easily extend / improve your code snippet.
     echo "Looking for files $(($SZK*1024)) bytes or bigger in $dir"
     find $dir -type f -size +${SZK}k -exec du -h \{} \;
 ---
+# Basic control
+## cmd1 || cmd2 ...
 
+    !sh
+    cat $file || echo "Unknown file $file"
+
+## cmd1 && cmd2 ...
+
+    !sh
+    make prog && ./prog && echo "Program prog compiled and ran ok"
+---
 # Flow control 1
 ### while ... do ... done
 
@@ -249,17 +259,32 @@ easily extend / improve your code snippet.
 ---
 # File redirection
 ## Combine with < or > or >> or |
-## Control Error messages with 2>&1 (or >&)
-## explicit file descriptor 4< and ls -l /proc/$$/fd
-
-# Shell arrays
-## basic notation/usage
-## bash indexing with strings
-
+    !sh
+    testcases="tests.txt"
+    echo "Running $testcases"
+    echo "Running testcases from $testcases" > results
+    F=0
+    while read TC
+    do
+	C=${TC%#*}
+	if [ ! "$C" ]; then
+	    continue
+	fi
+	if eval $C ; then
+	    echo $C : Passed >> results
+	else
+	    echo $C : Failed >> results
+	    echo $C : Failed
+	    F=$(($F+1))
+	fi
+    done < $testcases
+    echo "$(grep 'Passed$' results | wc -l) Passed $F Failed"
 ---
-
-# Including files
-# use . to share common code
+# More tricks with files
+# Control Error messages with 2>&1 (or >&)
+## explicit file descriptor 4< and ls -l /proc/$$/fd
+## Including files
+### use . to share common code
 
 ---
 
@@ -284,6 +309,12 @@ easily extend / improve your code snippet.
 # Common shell functions
 Improve the debugging with die() method
 Dump out calling line/error message
+
+---
+
+# Bash arrays
+## basic notation/usage
+## bash indexing with strings
 
 ---
 

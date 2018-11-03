@@ -1,0 +1,5 @@
+# This is a comment
+ls ./run-tests.sh
+echo hi
+echo this is a failure && touch /rubbish/file
+echo another pass
