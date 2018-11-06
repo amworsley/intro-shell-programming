@@ -342,33 +342,55 @@ easily extend / improve your code snippet.
 
 ---
 # Shell functions
-## Arguments $N ...
-    fn () {
-        echo $1 $*
+## Arguments $N ... and $#
+    $ fn () {
+        echo $1 and $2
+        echo no. of args is $#
     }
 ## Calling
-    fn hi
+    $ fn hi there programmer
+    hi and there
+    no. of args is 3
+
 ## Return only one byte 0-255 via $?
-    g() {
+    $ myfunc() {
         return 3
     }
-    g
-    echo $?
-
-## Local to scope variables
-    local I
+    $ myfunc
+    $ echo $?
+    3
 
 ---
-## Including files
-### use . to share common code
+# Re-using functions
+## Local to scope variables
+    $ newfunc () {
+        local I=3
+        echo "I=$I"
+    }
+    $ I=10
+    $ newfunc
+    I=3
+    $ echo $I
+    10
+
+# Including files
+### Use . to share common code
     # Get lsb functions
     . /lib/lsb/init-functions
-Useful for common library routines
-
+### Useful for common functions
 ---
 # Common shell functions
 ### Improve the debugging with die() method
-    die() { echo $1 && exit $2 }
+    die() {
+        echo $1 && exit $2
+    }
+    run () {
+        RES=$($*)
+        if [ $? != "0" ]; then
+            echo "$* : Failed $?"
+        fi
+    }
+
 ### Dump out calling line/error message
     die() {
         echo $1
@@ -380,8 +402,19 @@ Useful for common library routines
 ---
 
 # Bash arrays
-## basic notation/usage
-## bash indexing with strings
+## Basic notation/usage
+    $ A[0]="some value"
+    $ B=( "B0" "B1" 
+       "B2" "B3" )
+    $ echo ${A[0]} ${B[2]}
+    some value B2
+    $ echo ${B[@]}
+    B0 B1 B2 B3
+## Bash indexing with strings
+    $ declare -A MAPARR
+    $ MAPARR=( [carrot]=orange [apple]=green [banna]=yellow )
+    $ echo ${MAPARR[apple]}
+    green
 
 ---
 
