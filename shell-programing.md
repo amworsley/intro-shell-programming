@@ -281,35 +281,102 @@ easily extend / improve your code snippet.
     echo "$(grep 'Passed$' results | wc -l) Passed $F Failed"
 ---
 # More tricks with files
-# Control Error messages with 2>&1 (or >&)
-## explicit file descriptor 4< and ls -l /proc/$$/fd
-## Including files
-### use . to share common code
+### Explicit file descriptor 1> and 2> 
+    $ ls -l /proc/self/fd > /tmp/stdout.txt 2> /tmp/err.txt
+    $ cat /tmp/stdout.txt
+    total 0
+    lrwx------ 1 amw amw 64 Nov  6 11:22 0 -> /dev/pts/1
+    l-wx------ 1 amw amw 64 Nov  6 11:22 1 -> /tmp/stdout.txt
+    l-wx------ 1 amw amw 64 Nov  6 11:22 2 -> /tmp/err.txt
+    lr-x------ 1 amw amw 64 Nov  6 11:22 3 -> /proc/16405/fd
+### If file common can use 2>&1 (or >&)
+    $ ls -l /proc/self/fd > /tmp/stdout.txt 2>&1
 
+---
+# Shell's fd
+####  N> Output
+    $ exec 3> /tmp/testing
+####  N< Input
+    $ exec 4< /tmp/input
+    $ ls -l /proc/self/fd
+    total 0
+    lrwx------ 1 amw amw 64 Nov  6 12:10 0 -> /dev/pts/4
+    lrwx------ 1 amw amw 64 Nov  6 12:10 1 -> /dev/pts/4
+    lrwx------ 1 amw amw 64 Nov  6 12:10 2 -> /dev/pts/4
+    l-wx------ 1 amw amw 64 Nov  6 12:10 3 -> /tmp/testing
+    lr-x------ 1 amw amw 64 Nov  6 12:10 4 -> /tmp/stdout.txt
+    lr-x------ 1 amw amw 64 Nov  6 12:10 5 -> /proc/16799/fd
+#### Append with >&N
+    $ echo hello >&3
+    $ echo world >&3
+    $ cat /tmp/testing
+    hello
+    world
+### Read fd
+    $ cat <&4
 ---
 
 # processes
-## & - background
-## wait 
+### & - background
+    du -shx /lib &
+### wait 
+    wait $!
 ## !? - exit status
-## $$ - Parent PID
-## pidof - Process no.
-## trap for signals
+    echo "Exit Status is $?"
 ## ps - -C -f -U ....
+    ps afwU amw
+## pidof - Process no.
+    kill $(pidof cmd)
+## printf 
 ---
+# trap signals
+## Format:
+### trap action signal ...
+### Ignore INT/QUIT/USR1
+    trap '' INT QUIT USR1
+### Call cleanup() on INT (^C)
+    trap cleanup INT
+### Call warn() on failure 
+    trap warn ERR
+##(unexpected) command failure
 
+---
 # Shell functions
-# arguments
-# calling
-# returning
-## local to scope variables
+## Arguments $N ...
+    fn () {
+        echo $1 $*
+    }
+## Calling
+    fn hi
+## Return only one byte 0-255 via $?
+    g() {
+        return 3
+    }
+    g
+    echo $?
+
+## Local to scope variables
+    local I
 
 ---
+## Including files
+### use . to share common code
+    # Get lsb functions
+    . /lib/lsb/init-functions
+Useful for common library routines
 
+---
 # Common shell functions
-Improve the debugging with die() method
-Dump out calling line/error message
-
+### Improve the debugging with die() method
+    die() { echo $1 && exit $2 }
+### Dump out calling line/error message
+    die() {
+        echo $1
+        echo "In function ${FUNCNAME[1]} "
+        echo " at line ${BASH_LINENO[1]} of ${BASH_SOURCE[1]}"
+        exit $2
+    }
+#### bash only
 ---
 
 # Bash arrays
