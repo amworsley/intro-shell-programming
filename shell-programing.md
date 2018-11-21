@@ -21,7 +21,9 @@
 ### Make a shell function
 
     !sh
-    % newfiles() { find . -mtime -7 -type f -print }
+    % newfiles() {
+       find . -mtime -7 -type f -print
+    }
 
 ---
 # Now you can build on it
@@ -29,7 +31,9 @@
 ### Add an argument to make it flexible
 
     !sh
-    % newfiles() { find . -mtime "-${1:-7}" -type f -print }
+    % newfiles() {
+        find . -mtime "-${1:-7}" -type f -print
+     }
 
 ### Now files less than 10 days old
 
@@ -43,7 +47,9 @@
 
     !sh
     % cat >> ~/.bashrc  
-    newfiles() { find . -mtime "-${1:-7}" -type f -print }  
+    newfiles() {
+       find . -mtime "-${1:-7}" -type f -print
+    }  
     ^D  
     % . ~/.bashrc  
 
@@ -65,8 +71,49 @@
      | ssh -p123 backup-pc dd of=/backups/machine/D_L0.dump bs=1M
 
 * Don't waste that knowledge and experience
-* Put this into script file!
+* Put this into function!
 * To do this efficiently there are some tricks...
+
+---
+# Shell functions
+## Arguments $N ... and $#
+    $ fn () {
+        echo $1 and $2
+        echo no. of args is $#
+    }
+## Calling
+    $ fn hi there programmer
+    hi and there
+    no. of args is 3
+
+## Return only one byte 0-255 via $?
+    $ myfunc() {
+        return 3
+    }
+    $ myfunc
+    $ echo $?
+    3
+
+---
+
+# Shell Variables
+## Shell Expansion
+## Joining/default value
+## Prefix/postfix changing
+## Pattern substitution
+## Wild cards
+    !sh
+    #! /bin/sh
+    set -x
+    COUNT=2
+    echo $COUNT
+    V=${1:-"hello"}
+    B=${2:-"world"}
+    C=${B%ef}
+    #C=${B/a*/def}
+    echo A=$A B=$B REST=$*
+    shift 2
+    echo Now REST=$*
 
 ---
 
@@ -134,26 +181,44 @@ scripts.
 easily extend / improve your code snippet.
 
 ---
+# Re-using functions
+## Local to scope variables
+    $ newfunc () {
+        local I=3
+        echo "I=$I"
+    }
+    $ I=10
+    $ newfunc
+    I=3
+    $ echo $I
+    10
 
-# Shell Variables
-## Shell Expansion
-## Joining/default value
-## Prefix/postfix changing
-## Pattern substitution
-## Wild cards
-    !sh
-    #! /bin/sh
-    set -x
-    COUNT=2
-    echo $COUNT
-    V=${1:-"hello"}
-    B=${2:-"world"}
-    C=${B%ef}
-    #C=${B/a*/def}
-    echo A=$A B=$B REST=$*
-    shift 2
-    echo Now REST=$*
+# Including files
+### Use . to share common code
+    # Get lsb functions
+    . /lib/lsb/init-functions
+### Useful for common functions
+---
+# Common shell functions
+### Improve the debugging with die() method
+    die() {
+        echo $1 && exit $2
+    }
+    run () {
+        RES=$($*)
+        if [ $? != "0" ]; then
+            echo "$* : Failed $?"
+        fi
+    }
 
+### Dump out calling line/error message
+    die() {
+        echo $1
+        echo "In function ${FUNCNAME[1]} "
+        echo " at line ${BASH_LINENO[1]} of ${BASH_SOURCE[1]}"
+        exit $2
+    }
+#### bash only
 ---
 
 # Key builtins
@@ -168,7 +233,7 @@ easily extend / improve your code snippet.
     echo "Hi $(whoami), enter minimum size in K to find and directory"
     read SZK dir
     if [ ! -d $dir ]; then
-        echo "Sorry $dir is a directory: $dir"
+        echo "Sorry $dir is *NOT* a directory: $dir"
         exit 1
     fi
     echo "Looking for files $(($SZK*1024)) bytes or bigger in $dir"
@@ -215,11 +280,12 @@ easily extend / improve your code snippet.
     done
 
 ---
-# Flow control 3
+# Flow control 3 - sh-flow.sh
 ### case ... in ... esac - far better than if
 
     !sh
-    while [ $C -lt 10 ]; do
+    N=10
+    while [ $C -lt $N ]; do
         C=$(($C + 1))
         echo "Try $C"
         if $DR $* ; then
@@ -257,7 +323,7 @@ easily extend / improve your code snippet.
 ### Script any program sed, awk, ...
 
 ---
-# File redirection
+# File redirection - run-tests.sh
 ## Combine with < or > or >> or |
     !sh
     testcases="tests.txt"
@@ -340,65 +406,6 @@ easily extend / improve your code snippet.
     trap warn ERR
 ##(unexpected) command failure
 
----
-# Shell functions
-## Arguments $N ... and $#
-    $ fn () {
-        echo $1 and $2
-        echo no. of args is $#
-    }
-## Calling
-    $ fn hi there programmer
-    hi and there
-    no. of args is 3
-
-## Return only one byte 0-255 via $?
-    $ myfunc() {
-        return 3
-    }
-    $ myfunc
-    $ echo $?
-    3
-
----
-# Re-using functions
-## Local to scope variables
-    $ newfunc () {
-        local I=3
-        echo "I=$I"
-    }
-    $ I=10
-    $ newfunc
-    I=3
-    $ echo $I
-    10
-
-# Including files
-### Use . to share common code
-    # Get lsb functions
-    . /lib/lsb/init-functions
-### Useful for common functions
----
-# Common shell functions
-### Improve the debugging with die() method
-    die() {
-        echo $1 && exit $2
-    }
-    run () {
-        RES=$($*)
-        if [ $? != "0" ]; then
-            echo "$* : Failed $?"
-        fi
-    }
-
-### Dump out calling line/error message
-    die() {
-        echo $1
-        echo "In function ${FUNCNAME[1]} "
-        echo " at line ${BASH_LINENO[1]} of ${BASH_SOURCE[1]}"
-        exit $2
-    }
-#### bash only
 ---
 
 # Bash arrays
